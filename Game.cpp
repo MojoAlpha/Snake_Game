@@ -1,6 +1,8 @@
 #include<iostream>
 #include<conio.h>
 #include<cstdlib>
+#define Height 25
+#define width 25
 using namespace std;
 class SnakeHd
 {
@@ -8,9 +10,8 @@ class SnakeHd
   int x,y;
   char dir;
 }S;
-const int Height=20;
-const int width=20;
-int tailX[1000],tailY[1000];
+int tailX[100000],tailY[100000];
+long len;
 bool GameEnd;
 int foodX,foodY;
 long Points;
@@ -19,6 +20,8 @@ void InpLog();
 void Screen();
 int main()
 {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
     Setup();
   while(!GameEnd)
   {
@@ -37,6 +40,7 @@ S.y=width/2;
 foodX=rand()%width;
 foodY=rand()%Height;
 Points=0;
+len=0;
 }
 void Screen()
 {
@@ -50,14 +54,24 @@ void Screen()
     {
       if (j==0)
         printf("#");
-      if(i==foodY && j==foodX)
-          {printf("@");
-          continue;}
       if(i==S.y && j==S.x)
-        {printf("O");
-        continue;}
-      if(j!=0&&j!=width)
+          printf("O");
+      else if(i==foodY && j==foodX)
+          printf("@");
+      else
+      {
+        bool space = false;
+        for(int k=0;k<len;++k)
+        {
+          if(tailX[k] ==j && tailY[k]==i)
+          {
+            printf("0");
+            space=true;
+          }
+        }
+        if(!space)
           printf(" ");
+      }
       if(j==width-1)
         printf("#");
     }
@@ -71,6 +85,21 @@ void Screen()
 }
 void InpLog()
 {
+  int prX,prY;
+  prX = tailX[0];
+  prY =  tailY[0];
+  int pr2X,pr2Y;
+  tailX[0] = S.x;
+  tailY[0] = S.y;
+  for(int i=1;i<len;++i)
+  {
+    pr2X = tailX[i];
+    pr2Y = tailY[i];
+    tailX[i] = prX;
+    tailY[i] = prY;
+    prX = pr2X;
+    prY = pr2Y;
+  }
   if(kbhit())
   S.dir=getch();
     switch (S.dir) {
@@ -85,7 +114,11 @@ void InpLog()
     Points+=10;
     foodX=rand()%width;
     foodY=rand()%Height;
+    ++len;
   }
+  for(int i=1;i<len;++i)
+     if(S.x==tailX[i] && S.y==tailY[i])
+       GameEnd=true;
   if(S.x==-1 || S.x==width || S.y==-1 || S.y==Height)
   GameEnd=true;
 }
