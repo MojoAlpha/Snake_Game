@@ -1,6 +1,7 @@
 #include<iostream>
 #include<conio.h>
 #include<cstdlib>
+#include<unistd.h>
 #define Height 25
 #define width 25
 using namespace std;
@@ -12,25 +13,82 @@ class SnakeHd
 }S;
 int tailX[100000],tailY[100000];
 long len;
+char play='y';
 bool GameEnd;
-int foodX,foodY;
+int foodX,foodY,ModeG;
 long Points;
+float tym=0.5;
 void Setup();
 void InpLog();
 void Screen();
+void New_Game();
+void Mode();
+void GmSpeed();
 int main()
 {
-  ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
-    Setup();
+  int choice;
+  do
+  {
+  system("CLS");
+  cout<<"\t\tSNAKE XENIA II\n";
+  cout<<"\t\tWelcome To The New Version Of An Old Game!!";
+  cout<<"\n\t\t\t1.New Game\n\t\t\t2.Mode\n\t\t\t3.Game Speed\n\t\t\t4.Exit";
+  cout<<"\n\t\tEnter Your Choice : ";
+  scanf("%d",&choice);
+  switch (choice)
+   {
+    case 1:New_Game();break;
+    case 2:Mode();break;
+    case 3:GmSpeed();break;
+    case 4:play='n';break;
+    default:cout<<"\t\tInvalid Choice!!\n\t\tPress Any Key To Continue...";
+            getch();
+  }
+}while(play=='y');
+  cout<<"\t\tHave A Nice Day :)";
+  getch();
+  return 0;
+}
+void New_Game()
+{
+  Setup();
   while(!GameEnd)
   {
      Screen();
      InpLog();
+     sleep(tym);
   }
-  printf("\nGAME OVER!!");
+  cout<<"\nPress R To Play Again... OR";
+  cout<<"\nPress Any Key To Continue...";
+  if(getch()=='r'||getch()=='R')
+   New_Game();
+}
+void Mode()
+{
+  system("CLS");
+  cout<<"\t\tSelect Mode :\n\t\t1.Wall E\n\t\t2.Non-Wall Arcade";
+  cout<<"\n\t\tEnter Your Choice :";
+  cin>>ModeG;
+  cout<<"\t\tChanges Applied!! Press Any Key To Continue...";
   getch();
-  return 0;
+}
+void GmSpeed()
+{
+  system("CLS");
+  int choice;
+  float speed;
+  cout<<"\t\tGAME SPEED:\n\t\tCurrent Speed : "<<(tym-0.2)/0.1;
+  cout<<"\n\t\t1.Modify\n\t\t2.Back";
+  cout<<"\n\t\tEnter Your Choice : ";
+  cin>>choice;
+  switch (choice) {
+    case 1:cout<<"\t\tEnter New Speed (1-5) : ";
+           cin>>speed;
+           tym=speed*0.1+0.4;
+           cout<<"Changes Applied!! Press Any Key To Continue...";
+           getch(); break;
+    case 2:break;
+  }
 }
 void Setup()
 {
@@ -119,6 +177,16 @@ void InpLog()
   for(int i=1;i<len;++i)
      if(S.x==tailX[i] && S.y==tailY[i])
        GameEnd=true;
+  if(ModeG==1){
   if(S.x==-1 || S.x==width || S.y==-1 || S.y==Height)
-  GameEnd=true;
+  GameEnd=true;}
+  else{
+  if(S.x<=-1)
+  S.x=width-1;
+  else if(S.x>=width)
+  S.x=0;
+  if(S.y<=-1)
+  S.y=Height-1;
+  if(S.y>=Height)
+  S.y=0;}
 }
